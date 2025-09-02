@@ -93,6 +93,17 @@ REACT_APP_MAPBOX_ACCESS_TOKEN=your-mapbox-access-token
 REACT_APP_API_URL=http://localhost:5000
 ```
 
+#### Service Account Key Setup
+
+For Google Cloud & Dialogflow integration:
+
+1. Create a service account key in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials/serviceaccountkey)
+2. Download the JSON key file
+3. Place it in `backend/config/service-account-key.json` 
+4. Ensure this file is in `.gitignore` to prevent accidental commits of sensitive credentials
+
+A template example file `service-account-key.example.json` is provided for reference.
+
 ### 3. Database Setup
 
 #### Option A: MongoDB Atlas (Recommended)
