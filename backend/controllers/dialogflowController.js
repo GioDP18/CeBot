@@ -1,5 +1,6 @@
 const dialogflow = require('@google-cloud/dialogflow');
 const Route = require('../models/Route');
+const getGoogleCredentials = require('../config/googleCredentials');
 
 // Initialize Dialogflow client with error handling
 let sessionClient;
@@ -7,13 +8,16 @@ let projectId;
 let languageCode;
 
 try {
-  sessionClient = new dialogflow.SessionsClient({
-    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
-  });
+  // For Vercel deployment and local development
+  const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON 
+    ? { credentials: getGoogleCredentials() }
+    : { keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS };
+  
+  sessionClient = new dialogflow.SessionsClient(credentials);
   projectId = process.env.DIALOGFLOW_PROJECT_ID;
   languageCode = process.env.DIALOGFLOW_LANGUAGE_CODE || 'en';
 } catch (error) {
-  console.warn('Dialogflow not properly configured, using fallback responses');
+  console.warn('Dialogflow not properly configured, using fallback responses:', error);
   sessionClient = null;
 }
 
