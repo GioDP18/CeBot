@@ -1,0 +1,636 @@
+{
+  "metadata": {
+    "city": "Cebu (Metro Cebu)",
+    "generated_on": "2025-08-30",
+    "sources": [
+      "CommuteTour Cebu Jeep Codes (updated Jul 11, 2025)",
+      "MyBus schedules (Aug 2025)",
+      "CiBus/BRT interim corridor (2025)"
+    ]
+  },
+  "jeepney_routes": [
+    {
+      "route_code": "01C",
+      "type": "jeepney",
+      "origin": "Private",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "01K",
+      "type": "jeepney",
+      "origin": "Urgello",
+      "destination": "Parkmall",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "02B",
+      "type": "jeepney",
+      "origin": "South Bus Terminal",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "03A",
+      "type": "jeepney",
+      "origin": "Mabolo",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "03B",
+      "type": "jeepney",
+      "origin": "Mabolo",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "03L",
+      "type": "jeepney",
+      "origin": "Mabolo",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "03Q",
+      "type": "jeepney",
+      "origin": "Ayala",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "04B",
+      "type": "jeepney",
+      "origin": "Lahug",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "04H",
+      "type": "jeepney",
+      "origin": "Plaza Housing",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "04I",
+      "type": "jeepney",
+      "origin": "Plaza Housing",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "04L",
+      "type": "jeepney",
+      "origin": "Lahug",
+      "destination": "Ayala",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "04M",
+      "type": "jeepney",
+      "origin": "Lahug",
+      "destination": "Ayala",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "06B",
+      "type": "jeepney",
+      "origin": "Guadalupe",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "06C",
+      "type": "jeepney",
+      "origin": "Guadalupe",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "06G",
+      "type": "jeepney",
+      "origin": "Guadalupe",
+      "destination": "Tabo-an",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "06H",
+      "type": "jeepney",
+      "origin": "Guadalupe",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "07B",
+      "type": "jeepney",
+      "origin": "Banawa",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "08F",
+      "type": "jeepney",
+      "origin": "Alumnos",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "08G",
+      "type": "jeepney",
+      "origin": "Alumnos",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "09C",
+      "type": "jeepney",
+      "origin": "Basak",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "09F",
+      "type": "jeepney",
+      "origin": "Basak",
+      "destination": "Ibabao",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "09G",
+      "type": "jeepney",
+      "origin": "Basak",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "10F",
+      "type": "jeepney",
+      "origin": "Bulacao",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "10G",
+      "type": "jeepney",
+      "origin": "Pardo",
+      "destination": "Magallanes",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "10H",
+      "type": "jeepney",
+      "origin": "Bulacao",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "10M",
+      "type": "jeepney",
+      "origin": "Bulacao",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "11A",
+      "type": "jeepney",
+      "origin": "Inayawan",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "12D",
+      "type": "jeepney",
+      "origin": "Labangon",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "12G",
+      "type": "jeepney",
+      "origin": "Labangon",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "12I",
+      "type": "jeepney",
+      "origin": "Labangon",
+      "destination": "SM",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "12L",
+      "type": "jeepney",
+      "origin": "Labangon",
+      "destination": "Ayala",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "13B",
+      "type": "jeepney",
+      "origin": "Talamban",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "13C",
+      "type": "jeepney",
+      "origin": "Talamban",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "13H",
+      "type": "jeepney",
+      "origin": "Pit-os",
+      "destination": "Mandaue",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "14D",
+      "type": "jeepney",
+      "origin": "Ayala",
+      "destination": "Colon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "17B",
+      "type": "jeepney",
+      "origin": "Apas",
+      "destination": "Carbon",
+      "via": [
+        "Cebu IT Park"
+      ],
+      "notes": "Apas • Lahug • Jones • Carbon",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {
+        "Camp Lapu-Lapu Rd": [[123.909825, 10.340333], [123.90896, 10.34119], [123.907871, 10.341191], [123.907621, 10.341025], [123.906545, 10.340985], [123.905669, 10.339075]],
+        "Omega St": [[123.904682, 10.337813], [123.906590, 10.336462], [123.907250, 10.335801]],
+        "San Miguel Rd": [[123.907854, 10.336370], [123.908115, 10.336172], [123.907530, 10.335221], [123.906797, 10.332581], [123.906459, 10.332083]],
+        "Cebu IT Park Transport Terminal": [[123.906410, 10.331994], [123.906420, 10.331951], [123.906552, 10.331869], [123.906373, 10.331500], [123.906543, 10.331319]],
+        "W Geonzon St": [[123.906559, 10.331303], [123.906088, 10.330534]],
+        "V. Padriga St": [[123.906088, 10.330534], [123.906226, 10.330441], [123.907515, 10.329682]],
+        "Jose Maria del Mar St": [[123.907553, 10.329636], [123.906843, 10.328445]],
+        "Abad St": [[123.906825, 10.328424], [123.905340, 10.329282]],
+        "Salinas Dr": [[123.904505, 10.327921], [123.898626, 10.330896]],
+        "Gordo Ave": [[123.897936, 10.330695], [123.897386, 10.328626], [123.897922, 10.326932], [123.898133, 10.325338], [123.899307, 10.319901]],
+        "Avelino Morales St": [[123.899278, 10.319895], [123.898895, 10.319687], [123.899277, 10.318463]],
+        "N Escario St": [[123.899286, 10.318438], [123.890859, 10.316253]],
+        "Jones Ave": [[123.890905, 10.316072], [123.892820, 10.310641]],
+        "Fuente Osmeña Cir": [[123.892764, 10.310421], [123.892544, 10.310220], [123.892426, 10.309921], [123.892619, 10.309388], [123.893283, 10.309205]],
+        "Osmeña Blvd": [[123.893325, 10.309078], [123.896679, 10.299706], [123.896820, 10.299332], [123.898179, 10.296312]],
+        "P. Lopez Street": [[123.898141, 10.296115], [123.897813, 10.294959], [123.897827, 10.294848], [123.898087, 10.293837]]
+      }
+    },
+    {
+      "route_code": "17C",
+      "type": "jeepney",
+      "origin": "Apas",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "17D",
+      "type": "jeepney",
+      "origin": "Apas",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "20A",
+      "type": "jeepney",
+      "origin": "Mandaue",
+      "destination": "Ayala",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "21A",
+      "type": "jeepney",
+      "origin": "Mandaue",
+      "destination": "Cathedral",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "22A",
+      "type": "jeepney",
+      "origin": "Mandaue",
+      "destination": "Cathedral",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "22D",
+      "type": "jeepney",
+      "origin": "Mandaue",
+      "destination": "Cathedral",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "22I",
+      "type": "jeepney",
+      "origin": "Mandaue",
+      "destination": "Gaisano Country Mall",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "23",
+      "type": "jeepney",
+      "origin": "Parkmall",
+      "destination": "Punta Engaño",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "23D",
+      "type": "jeepney",
+      "origin": "Parkmall",
+      "destination": "Opon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "62B",
+      "type": "jeepney",
+      "origin": "Pit-os",
+      "destination": "Carbon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-01A",
+      "type": "modern_jeep",
+      "origin": "Mactan",
+      "destination": "Punta Engaño",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-02B",
+      "type": "modern_jeep",
+      "origin": "Mandaue",
+      "destination": "Parkmall",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-03A",
+      "type": "modern_jeep",
+      "origin": "Cordova",
+      "destination": "Lapu Lapu",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-03B",
+      "type": "modern_jeep",
+      "origin": "Mactan",
+      "destination": "Cordova",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-04A",
+      "type": "modern_jeep",
+      "origin": "Mactan",
+      "destination": "Tamiya",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-04B",
+      "type": "modern_jeep",
+      "origin": "Mactan",
+      "destination": "MEPZ2",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "route_code": "MI-05A",
+      "type": "modern_jeep",
+      "origin": "Mactan",
+      "destination": "Opon",
+      "via": [],
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    }
+  ],
+  "bus_routes": [
+    {
+      "service": "MyBus",
+      "route_name": "SM City Cebu ↔ SM Seaside",
+      "fare": "₱50",
+      "frequency": "6:00 AM – 11:00 PM",
+      "notes": "Core trunk; frequent",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "MyBus",
+      "route_name": "SM Seaside ↔ Fuente",
+      "fare": "₱50",
+      "frequency": "8:20 AM – 10:00 PM",
+      "notes": "Passes Fuente Osmeña Circle",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "MyBus",
+      "route_name": "SM Seaside ↔ Talisay",
+      "fare": "₱50",
+      "frequency": "6:00 AM – 11:00 PM",
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "MyBus",
+      "route_name": "Talisay ↔ Parkmall",
+      "fare": "₱50",
+      "frequency": "6:00 AM – 11:00 PM",
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "MyBus",
+      "route_name": "SM Seaside ↔ Anjo World",
+      "fare": "₱50",
+      "frequency": "7:00 AM – 10:00 PM",
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "MyBus",
+      "route_name": "SM City Cebu ↔ SM Consolacion",
+      "fare": "₱50",
+      "frequency": "8:00 AM – 9:30 PM",
+      "notes": "",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "MyBus",
+      "route_name": "Mactan–Cebu Airport ↔ SM City Cebu",
+      "fare": "₱50",
+      "frequency": "Every ~20 mins",
+      "notes": "Extension to IT Park discontinued Jun 21, 2025",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    },
+    {
+      "service": "CiBus",
+      "route_name": "SRP ↔ Fuente ↔ Escario ↔ IT Park",
+      "fare": "₱12+",
+      "frequency": "Frequent",
+      "notes": "Interim BRT-style bus corridor",
+      "last_verified": "2025-08-30",
+      "route_coordinates": {}
+    }
+  ]
+}

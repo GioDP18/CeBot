@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CeBot - Your intelligent Cebu City transport assistant. Find jeepney routes, bus schedules, and get real-time transport information." />
+    <meta name="keywords" content="cebu, transport, jeepney, bus, routes, chatbot, cebu city, philippines" />
+    <meta name="author" content="CeBot Team" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="CeBot - Cebu Transport Assistant" />
+    <meta property="og:description" content="Your intelligent Cebu City transport assistant. Find jeepney routes, bus schedules, and get real-time transport information." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cebot.com" />
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CeBot - Cebu Transport Assistant" />
+    <meta name="twitter:description" content="Your intelligent Cebu City transport assistant." />
+    
+    <title>CeBot - Cebu Transport Assistant</title>
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Mapbox CSS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f5f5f5;
+      }
+      
+      #root {
+        min-height: 100vh;
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+      
+      /* Loading animation */
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Route type indicators */
+      .route-type-jeepney {
+        color: #1976d2;
+      }
+      
+      .route-type-modern-jeep {
+        color: #ff9800;
+      }
+      
+      .route-type-bus {
+        color: #2196f3;
+      }
+      
+      /* Responsive utilities */
+      .mobile-only {
+        display: none;
+      }
+      
+      .desktop-only {
+        display: block;
+      }
+      
+      @media (max-width: 768px) {
+        .mobile-only {
+          display: block;
+        }
+        
+        .desktop-only {
+          display: none;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-b9743b63.js"></script>
+    <link rel="stylesheet" href="/assets/index-54d1b929.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    
+  </body>
+</html>
