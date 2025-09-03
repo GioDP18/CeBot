@@ -320,17 +320,17 @@ const Chatbot = () => {
                 >
                   {isLoading ? <CircularProgress size={20} /> : <SendIcon />}
                 </Button>
-                <IconButton
+                {/* <IconButton
                   onClick={() => dispatch(clearChat())}
                   color="secondary"
                   title="Clear chat"
                 >
                   <ClearIcon />
-                </IconButton>
+                </IconButton> */}
               </Box>
 
               {/* Connection Status */}
-              <Box sx={{ mt: 1, textAlign: 'center' }}>
+              {/* <Box sx={{ mt: 1, textAlign: 'center' }}>
                 {import.meta.env.PROD ? (
                   <Chip
                     label="HTTP Mode"
@@ -351,7 +351,7 @@ const Chatbot = () => {
                     )}
                   </>
                 )}
-              </Box>
+              </Box> */}
             </CardContent>
           </Card>
         </Grid>
