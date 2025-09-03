@@ -1,29 +1,18 @@
-const ollamaConfig = require('../config/ollama');
-const vectorSearchService = require('../services/vectorSearchService');
 const Route = require('../models/Route');
 
+// Simplified CeBot AI Service for immediate functionality
 class CebotAIService {
   constructor() {
-    this.isInitialized = false;
+    this.isInitialized = true; // Always initialized for basic functionality
   }
 
   async initialize() {
     try {
-      // Initialize Ollama
-      const ollamaReady = await ollamaConfig.initialize();
-      
-      // Initialize Vector Search
-      const vectorReady = await vectorSearchService.initialize();
-      
-      this.isInitialized = ollamaReady || vectorReady; // At least one should work
-      
-      if (this.isInitialized) {
-        console.log('✅ CeBot AI Service initialized');
-      } else {
-        console.warn('⚠️  CeBot AI Service initialized with limited functionality');
-      }
-      
-      return this.isInitialized;
+      // For now, we'll use basic functionality
+      // Later we can add Ollama and Vector Search
+      console.log('✅ CeBot AI Service initialized (basic mode)');
+      this.isInitialized = true;
+      return true;
     } catch (error) {
       console.error('❌ Failed to initialize CeBot AI Service:', error);
       return false;
@@ -38,21 +27,9 @@ class CebotAIService {
       let searchResults = null;
 
       if (routeQuery) {
-        // Search for relevant routes using vector search
+        // Search for relevant routes using traditional search
         try {
-          const vectorResults = await vectorSearchService.searchSimilarRoutes(
-            userMessage, 
-            5, 
-            0.6
-          );
-          
-          if (vectorResults.length === 0) {
-            // Fallback to traditional route search
-            searchResults = await this.searchTraditionalRoutes(routeQuery);
-          } else {
-            searchResults = vectorResults;
-          }
-          
+          searchResults = await this.searchTraditionalRoutes(routeQuery);
           routeContext = {
             query: routeQuery,
             results: searchResults,
@@ -60,29 +37,17 @@ class CebotAIService {
           };
         } catch (error) {
           console.error('Route search error:', error);
-          // Fallback to traditional search
-          searchResults = await this.searchTraditionalRoutes(routeQuery);
+          searchResults = [];
           routeContext = {
             query: routeQuery,
-            results: searchResults,
-            foundRoutes: searchResults.length > 0
+            results: [],
+            foundRoutes: false
           };
         }
       }
 
-      // 2. Generate AI response
-      let aiResponse;
-      
-      try {
-        if (ollamaConfig.isInitialized) {
-          aiResponse = await ollamaConfig.generateCebuResponse(userMessage, routeContext);
-        } else {
-          aiResponse = this.generateFallbackResponse(userMessage, routeContext);
-        }
-      } catch (error) {
-        console.error('AI response error:', error);
-        aiResponse = this.generateFallbackResponse(userMessage, routeContext);
-      }
+      // 2. Generate response
+      const aiResponse = this.generateResponse(userMessage, routeContext);
 
       return {
         response: aiResponse,
@@ -182,7 +147,7 @@ class CebotAIService {
     }
   }
 
-  generateFallbackResponse(userMessage, routeContext = null) {
+  generateResponse(userMessage, routeContext = null) {
     const lowerMessage = userMessage.toLowerCase();
 
     // Greetings
