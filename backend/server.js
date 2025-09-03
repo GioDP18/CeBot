@@ -17,7 +17,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: [
+      'http://localhost:5173',
+      'https://cebot-nine.vercel.app',
+      process.env.CORS_ORIGIN
+    ].filter(Boolean),
     methods: ["GET", "POST"]
   }
 });
@@ -29,9 +33,28 @@ connectDB();
 app.use(helmet());
 app.use(compression());
 app.use(morgan('combined'));
+
+// Configure CORS for both development and production
+const allowedOrigins = [
+  'http://localhost:5173',           // Local development
+  'https://cebot-nine.vercel.app',   // Production frontend
+  process.env.CORS_ORIGIN            // Additional origin from env
+].filter(Boolean); // Remove any undefined values
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
