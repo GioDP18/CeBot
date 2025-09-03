@@ -32,7 +32,9 @@ import {
   setSocket,
   setConnectionStatus,
   sendChatMessage,
-  clearChat
+  clearChat,
+  setSearchResults,
+  setSuggestions
 } from '../store/slices/chatSlice';
 
 const Chatbot = () => {
@@ -169,24 +171,34 @@ const Chatbot = () => {
     setTimeout(() => scrollToBottom(), 50);
 
     try {
-      // In production or when WebSocket is not connected, use HTTP API
-      if (import.meta.env.PROD || !socketRef.current || !isConnected) {
-        console.log('Using HTTP API for message sending');
-        const result = await dispatch(sendChatMessage({ 
-          message, 
-          sessionId: 'user-session' 
-        })).unwrap();
+      // Always use HTTP API for our new AI service
+      console.log('Using CeBot AI Service API for message sending');
+      const result = await dispatch(sendChatMessage({ 
+        message, 
+        sessionId: 'user-session' 
+      })).unwrap();
 
-        if (result.data && result.data.text) {
-          dispatch(addBotMessage(result.data.text));
-        } else {
-          // Handle different response formats
-          dispatch(addBotMessage(result.message || 'I received your message!'));
+      // Handle the AI service response
+      if (result.success && result.data && result.data.text) {
+        dispatch(addBotMessage(result.data.text));
+        
+        // Update search results if routes were found
+        if (result.searchResults && result.searchResults.length > 0) {
+          dispatch(setSearchResults({
+            data: result.searchResults,
+            origin: result.data.parameters?.query?.origin || '',
+            destination: result.data.parameters?.query?.destination || '',
+            count: result.searchResults.length
+          }));
+        }
+        
+        // Update suggestions if available
+        if (result.suggestions) {
+          dispatch(setSuggestions(result.suggestions));
         }
       } else {
-        // Use WebSocket for local development
-        console.log('Using WebSocket for message sending');
-        socketRef.current.emit('chat_message', { message });
+        // Fallback if response format is unexpected
+        dispatch(addBotMessage(result.message || 'I received your message!'));
       }
 
     } catch (error) {

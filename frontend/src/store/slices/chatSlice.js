@@ -34,7 +34,7 @@ const initialState = {
   messages: [
     {
       id: 1,
-      message: "Hello! I'm CeBot, your Cebu transport assistant. How can I help you today?",
+      message: "Kumusta! I'm CeBot, your smart Cebu transport assistant! 🚌 I can help you find the best routes around Metro Cebu using jeepneys, buses, and modern PUVs. Try asking me 'How do I get from Ayala to SM?' or 'What jeep goes to USC?'",
       timestamp: new Date().toISOString(),
       sender: 'bot'
     }
@@ -74,7 +74,7 @@ const chatSlice = createSlice({
       state.messages = [
         {
           id: Date.now(),
-          message: "Hello! I'm CeBot, your Cebu transport assistant. How can I help you today?",
+          message: "Kumusta! I'm CeBot, your smart Cebu transport assistant! 🚌 I can help you find the best routes around Metro Cebu using jeepneys, buses, and modern PUVs. Try asking me 'How do I get from Ayala to SM?' or 'What jeep goes to USC?'",
           timestamp: new Date().toISOString(),
           sender: 'bot'
         }
@@ -107,11 +107,18 @@ const chatSlice = createSlice({
       })
       .addCase(sendChatMessage.fulfilled, (state, action) => {
         state.isLoading = false;
-        if (action.payload.data.routes) {
-          state.searchResults = action.payload.data;
+        // Handle search results from our AI service
+        if (action.payload.searchResults && action.payload.searchResults.length > 0) {
+          state.searchResults = {
+            data: action.payload.searchResults,
+            origin: action.payload.data.parameters?.query?.origin || '',
+            destination: action.payload.data.parameters?.query?.destination || '',
+            count: action.payload.searchResults.length
+          };
         }
-        if (action.payload.data.suggestions) {
-          state.suggestions = action.payload.data.suggestions;
+        // Handle suggestions from our AI service
+        if (action.payload.suggestions) {
+          state.suggestions = action.payload.suggestions;
         }
       })
       .addCase(sendChatMessage.rejected, (state, action) => {
