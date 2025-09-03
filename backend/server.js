@@ -12,6 +12,7 @@ const connectDB = require('./config/database');
 const routes = require('./routes');
 const dialogflowRoutes = require('./routes/dialogflow');
 const socketHandler = require('./socket/socketHandler');
+const cebotAIService = require('./services/cebotAIService');
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +29,17 @@ const io = socketIo(server, {
 
 // Connect to MongoDB
 connectDB();
+
+// Initialize CeBot AI Service
+cebotAIService.initialize().then(success => {
+  if (success) {
+    console.log('🤖 CeBot AI Service ready');
+  } else {
+    console.warn('⚠️  CeBot AI Service running with limited functionality');
+  }
+}).catch(error => {
+  console.error('❌ Failed to initialize CeBot AI Service:', error);
+});
 
 // Middleware
 app.use(helmet());
