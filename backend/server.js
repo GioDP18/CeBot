@@ -40,8 +40,8 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api', routes);
 app.use('/api/chat', dialogflowRoutes);
 
-// Health check endpoint
-app.get('/health', (req, res) => {
+// Health check endpoint with API prefix
+app.get('/api/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
     message: 'CeBot API is running',
