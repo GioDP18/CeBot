@@ -1035,7 +1035,7 @@ const RouteSearch = () => {
 
         {/* Results Panel */}
         <Grid item xs={12} md={8} sx={{ mt: { xs: 0, md: 0 } }}>
-          <Card sx={{ height: { md: '550px', lg: '600px', display: 'flex', flexDirection: 'column' } }}>
+          <Card sx={{ height: { md: '550px', lg: '670px', display: 'flex', flexDirection: 'column' } }}>
             <CardContent sx={{ 
               display: 'flex', 
               flexDirection: 'column', 
@@ -1090,7 +1090,7 @@ const RouteSearch = () => {
               {sortedRoutes && sortedRoutes.length > 0 ? (
                 <List sx={{ 
                   overflow: { md: 'auto' }, 
-                  maxHeight: { md: '450px', lg: '500px' },
+                  maxHeight: { md: '450px', lg: '600px' },
                   '&::-webkit-scrollbar': {
                     width: '6px',
                   },

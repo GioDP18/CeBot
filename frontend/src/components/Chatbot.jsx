@@ -53,35 +53,52 @@ const Chatbot = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
-  // Initialize WebSocket connection with retry logic
+  // Initialize WebSocket connection with retry logic and fallback
   useEffect(() => {
     const connectSocket = () => {
+      // Skip WebSocket connection in production for now due to Vercel limitations
+      if (import.meta.env.PROD) {
+        console.log('Production environment detected - using HTTP API only');
+        dispatch(setConnectionStatus(false));
+        return;
+      }
+
       if (!socketRef.current && connectionAttempts < 3) {
         console.log(`Attempting to connect to WebSocket server (attempt ${connectionAttempts + 1})`);
+        console.log(`Connecting to: ${import.meta.env.VITE_API_URL}`);
         
         socketRef.current = io(`${import.meta.env.VITE_API_URL}`, {
-          timeout: 5000,
+          timeout: 10000,
           reconnection: true,
-          reconnectionAttempts: 3,
-          reconnectionDelay: 1000
+          reconnectionAttempts: 5,
+          reconnectionDelay: 2000,
+          transports: ['websocket', 'polling'], // Allow fallback to polling
+          upgrade: true,
+          autoConnect: true
         });
         
         socketRef.current.on('connect', () => {
-          console.log('Connected to WebSocket server');
+          console.log('✅ Connected to WebSocket server');
           dispatch(setConnectionStatus(true));
           dispatch(setSocket(socketRef.current));
           setConnectionAttempts(0);
         });
 
-        socketRef.current.on('disconnect', () => {
-          console.log('Disconnected from WebSocket server');
+        socketRef.current.on('disconnect', (reason) => {
+          console.log('❌ Disconnected from WebSocket server:', reason);
           dispatch(setConnectionStatus(false));
         });
 
         socketRef.current.on('connect_error', (error) => {
-          console.error('WebSocket connection error:', error);
+          console.error('❌ WebSocket connection error:', error);
           dispatch(setConnectionStatus(false));
-          setConnectionAttempts(prev => prev + 1);
+          setConnectionAttempts(prev => {
+            const newAttempts = prev + 1;
+            if (newAttempts >= 3) {
+              console.log('🔄 Max connection attempts reached, using HTTP fallback');
+            }
+            return newAttempts;
+          });
         });
 
         socketRef.current.on('new_message', (data) => {
@@ -101,9 +118,11 @@ const Chatbot = () => {
       }
     };
 
-    connectSocket();
+    // Small delay to allow environment detection
+    const timer = setTimeout(connectSocket, 100);
 
     return () => {
+      clearTimeout(timer);
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
@@ -126,19 +145,24 @@ const Chatbot = () => {
     setIsTyping(true);
 
     try {
-      // Try WebSocket first if connected
-      if (socketRef.current && isConnected) {
-        socketRef.current.emit('chat_message', { message });
-      } else {
-        // Fallback to HTTP API
+      // In production or when WebSocket is not connected, use HTTP API
+      if (import.meta.env.PROD || !socketRef.current || !isConnected) {
+        console.log('Using HTTP API for message sending');
         const result = await dispatch(sendChatMessage({ 
           message, 
           sessionId: 'user-session' 
         })).unwrap();
 
-        if (result.data.text) {
+        if (result.data && result.data.text) {
           dispatch(addBotMessage(result.data.text));
+        } else {
+          // Handle different response formats
+          dispatch(addBotMessage(result.message || 'I received your message!'));
         }
+      } else {
+        // Use WebSocket for local development
+        console.log('Using WebSocket for message sending');
+        socketRef.current.emit('chat_message', { message });
       }
 
     } catch (error) {
@@ -307,15 +331,25 @@ const Chatbot = () => {
 
               {/* Connection Status */}
               <Box sx={{ mt: 1, textAlign: 'center' }}>
-                <Chip
-                  label={isConnected ? 'Connected' : 'Disconnected'}
-                  color={isConnected ? 'success' : 'error'}
-                  size="small"
-                />
-                {!isConnected && connectionAttempts > 0 && (
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                    Retrying connection... (attempt {connectionAttempts}/3)
-                  </Typography>
+                {import.meta.env.PROD ? (
+                  <Chip
+                    label="HTTP Mode"
+                    color="primary"
+                    size="small"
+                  />
+                ) : (
+                  <>
+                    <Chip
+                      label={isConnected ? 'WebSocket Connected' : 'HTTP Mode (WebSocket Disconnected)'}
+                      color={isConnected ? 'success' : 'warning'}
+                      size="small"
+                    />
+                    {!isConnected && connectionAttempts > 0 && connectionAttempts < 3 && (
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                        Retrying WebSocket connection... (attempt {connectionAttempts}/3)
+                      </Typography>
+                    )}
+                  </>
                 )}
               </Box>
             </CardContent>
