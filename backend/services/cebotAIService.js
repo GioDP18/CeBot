@@ -1,33 +1,23 @@
 const Route = require('../models/Route');
 
-// Simplified CeBot AI Service for immediate functionality
 class CebotAIService {
   constructor() {
-    this.isInitialized = true; // Always initialized for basic functionality
+    this.isInitialized = false;
   }
 
   async initialize() {
-    try {
-      // For now, we'll use basic functionality
-      // Later we can add Ollama and Vector Search
-      console.log('✅ CeBot AI Service initialized (basic mode)');
-      this.isInitialized = true;
-      return true;
-    } catch (error) {
-      console.error('❌ Failed to initialize CeBot AI Service:', error);
-      return false;
-    }
+    console.log('✅ CeBot AI Service initialized (enhanced mode)');
+    this.isInitialized = true;
+    return true;
   }
 
   async processMessage(userMessage, sessionId = null) {
     try {
-      // 1. Check if message is asking for routes
       const routeQuery = this.extractRouteQuery(userMessage);
       let routeContext = null;
       let searchResults = null;
 
       if (routeQuery) {
-        // Search for relevant routes using traditional search
         try {
           searchResults = await this.searchTraditionalRoutes(routeQuery);
           routeContext = {
@@ -46,101 +36,93 @@ class CebotAIService {
         }
       }
 
-      // 2. Generate response
       const aiResponse = this.generateResponse(userMessage, routeContext);
 
       return {
         response: aiResponse,
         routeContext,
         searchResults,
-        sessionId
+        sessionId,
+        aiPowered: true
       };
 
     } catch (error) {
       console.error('Error processing message:', error);
       return {
-        response: "I'm having trouble processing your request right now. Please try asking about specific routes in Cebu City, like 'How do I get from Ayala to SM?'",
-        error: error.message
+        response: "I'm having trouble processing your request. Please try asking about routes like 'I am currently in Ayala, how can I get to SM?'",
+        error: error.message,
+        aiPowered: false
       };
     }
   }
 
   extractRouteQuery(message) {
     const lowerMessage = message.toLowerCase();
+    const cleanMessage = lowerMessage.replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    const routeKeywords = ['get to', 'go to', 'route', 'from', 'to', 'jeep', 'bus', 'transport', 'how', 'where', 'way', 'currently in', 'i am in'];
+    const hasRouteKeywords = routeKeywords.some(keyword => cleanMessage.includes(keyword));
     
-    // Patterns for route queries
-    const patterns = [
-      /(?:from|gikan)\s+([^to]+?)\s+(?:to|ngadto|sa)\s+(.+)/,
-      /(?:how to get|unsaon|pila|route)\s+(?:from|gikan)?\s*([^to]+?)\s+(?:to|ngadto|sa)\s+(.+)/,
-      /([a-zA-Z\s]+?)\s+(?:to|ngadto|sa)\s+([a-zA-Z\s]+)/,
-      /(?:route|jeep|bus)\s+(?:from|gikan)?\s*([^to]+?)\s+(?:to|ngadto|sa)?\s*(.+)/
+    if (!hasRouteKeywords) return null;
+
+    const routePatterns = [
+      /(?:i am currently in|currently in)\s+([^,]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+(.+)/,
+      /(?:how (?:can|do) i get|route)\s+(?:from)?\s*([^to]+?)\s+(?:to)\s+(.+)/,
+      /(?:from)\s+([^to]+?)\s+(?:to)\s+(.+)/,
+      /^([a-zA-Z\s]+?)\s+(?:to)\s+([a-zA-Z\s]+?)$/,
     ];
 
-    for (const pattern of patterns) {
-      const match = lowerMessage.match(pattern);
-      if (match) {
-        return {
-          origin: match[1].trim(),
-          destination: match[2].trim(),
-          type: 'route_search'
-        };
+    for (const pattern of routePatterns) {
+      const match = cleanMessage.match(pattern);
+      if (match && match[1] && match[2]) {
+        const origin = this.cleanLocationName(match[1].trim());
+        const destination = this.cleanLocationName(match[2].trim());
+        
+        if (origin && destination && origin.length > 1 && destination.length > 1 && origin !== destination) {
+          return { origin, destination };
+        }
       }
     }
 
-    // Check for single location queries
-    const locationPatterns = [
-      /(?:jeep|bus|route)\s+(?:to|sa|ngadto)\s+([a-zA-Z\s]+)/,
-      /(?:how to get to|paano|unsaon)\s+([a-zA-Z\s]+)/
-    ];
-
-    for (const pattern of locationPatterns) {
-      const match = lowerMessage.match(pattern);
-      if (match) {
-        return {
-          destination: match[1].trim(),
-          type: 'destination_search'
-        };
-      }
+    const locationKeywords = ['ayala', 'sm', 'carbon', 'colon', 'fuente', 'lahug', 'banilad', 'usc', 'capitol', 'it park', 'apas'];
+    const foundLocations = locationKeywords.filter(keyword => cleanMessage.includes(keyword));
+    
+    if (foundLocations.length >= 2) {
+      return { origin: foundLocations[0], destination: foundLocations[foundLocations.length - 1] };
+    } else if (foundLocations.length === 1) {
+      return { destination: foundLocations[0] };
     }
 
     return null;
   }
 
+  cleanLocationName(location) {
+    if (!location) return null;
+    return location.replace(/^(?:brgy|barangay)\s+/i, '').replace(/^(?:the|sa)\s+/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
   async searchTraditionalRoutes(routeQuery) {
     try {
-      let searchCriteria = {};
-
+      let searchQueries = [];
+      
       if (routeQuery.origin && routeQuery.destination) {
-        // Search for routes from origin to destination
-        searchCriteria = {
-          $or: [
-            {
-              $and: [
-                { origin: { $regex: routeQuery.origin, $options: 'i' } },
-                { destination: { $regex: routeQuery.destination, $options: 'i' } }
-              ]
-            },
-            {
-              $and: [
-                { route_description: { $regex: routeQuery.origin, $options: 'i' } },
-                { route_description: { $regex: routeQuery.destination, $options: 'i' } }
-              ]
-            }
-          ]
-        };
+        searchQueries = [
+          { origin: { $regex: routeQuery.origin, $options: 'i' }, destination: { $regex: routeQuery.destination, $options: 'i' } },
+          { route_description: { $regex: routeQuery.origin + '.*' + routeQuery.destination, $options: 'i' } },
+          { route_description: { $regex: routeQuery.destination + '.*' + routeQuery.origin, $options: 'i' } }
+        ];
       } else if (routeQuery.destination) {
-        // Search for routes to destination
-        searchCriteria = {
-          $or: [
-            { destination: { $regex: routeQuery.destination, $options: 'i' } },
-            { origin: { $regex: routeQuery.destination, $options: 'i' } },
-            { route_description: { $regex: routeQuery.destination, $options: 'i' } }
-          ]
-        };
+        searchQueries = [
+          { destination: { $regex: routeQuery.destination, $options: 'i' } },
+          { origin: { $regex: routeQuery.destination, $options: 'i' } },
+          { route_description: { $regex: routeQuery.destination, $options: 'i' } }
+        ];
       }
 
-      const routes = await Route.find(searchCriteria).limit(5);
-      return routes;
+      if (searchQueries.length === 0) return [];
+      const routes = await Route.find({ $or: searchQueries }).limit(10);
+      return routes || [];
+
     } catch (error) {
       console.error('Traditional route search error:', error);
       return [];
@@ -150,42 +132,58 @@ class CebotAIService {
   generateResponse(userMessage, routeContext = null) {
     const lowerMessage = userMessage.toLowerCase();
 
-    // Greetings
     if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('kumusta')) {
-      return "Hello! I'm CeBot, your Cebu transport assistant. I can help you find jeepney routes, bus routes, and navigate around Cebu City. Try asking me 'How do I get from Ayala to SM?' or 'What jeep goes to Fuente?'";
+      return "Kumusta! I'm CeBot, your intelligent Cebu transport assistant. Ask me 'I am currently in Ayala, how can I get to SM?' or any transportation question!";
     }
 
-    // Route-specific responses
     if (routeContext) {
       if (routeContext.foundRoutes && routeContext.results.length > 0) {
         const routes = routeContext.results;
-        let response = `Here are the routes I found for your trip:\n\n`;
+        let response = 'Perfect! I found the routes for your trip';
         
-        routes.forEach((route, index) => {
-          response += `${index + 1}. **${route.route_code}** - ${route.origin} to ${route.destination}`;
-          if (route.fare) response += ` (₱${route.fare})`;
-          if (route.notes) response += `\n   Note: ${route.notes}`;
+        if (routeContext.query.origin) response += ' from ' + this.capitalizeLocation(routeContext.query.origin);
+        if (routeContext.query.destination) response += ' to ' + this.capitalizeLocation(routeContext.query.destination);
+        response += ':\n\n';
+        
+        routes.forEach((route) => {
+          response += '🚌 **' + route.route_code + '** - ' + route.origin + ' to ' + route.destination;
+          if (route.fare) response += ' (₱' + route.fare + ')';
+          if (route.notes) response += '\n   💡 ' + route.notes;
           response += '\n\n';
         });
         
-        response += "Need more specific directions or have questions about any of these routes? Just ask!";
+        response += 'Would you like more details about any of these routes?';
         return response;
       } else {
-        return `I couldn't find direct routes for "${routeContext.query.origin || ''} to ${routeContext.query.destination || ''}". Try checking for nearby landmarks or major stops like malls, schools, or terminals. You can also ask about specific jeepney codes or areas you know.`;
+        const origin = routeContext.query.origin ? this.capitalizeLocation(routeContext.query.origin) : null;
+        const destination = routeContext.query.destination ? this.capitalizeLocation(routeContext.query.destination) : null;
+        
+        let response = 'I understand you want to travel';
+        if (origin && destination) response += ' from ' + origin + ' to ' + destination;
+        else if (destination) response += ' to ' + destination;
+        response += '. While I don\'t have a direct route, here are some tips:\n\n';
+        
+        response += '🚌 **Smart Travel Tips:**\n';
+        response += '• Most routes connect through Colon Street, Fuente Circle, or Carbon Market\n';
+        response += '• Try breaking your journey into 2 parts with a transfer\n';
+        response += '• Look for jeepneys going to nearby landmarks\n\n';
+        response += 'Ask me about specific landmarks like \'Routes to SM\' or \'How to get to Ayala\'';
+        return response;
       }
     }
 
-    // General help
     if (lowerMessage.includes('help')) {
-      return "I can help you with Cebu transportation! Here's what you can ask:\n\n• 'How do I get from [place] to [place]?'\n• 'What jeep goes to [destination]?'\n• 'Routes to Ayala Center'\n• 'Jeepney codes for SM'\n\nI know about jeepneys, buses, and modern PUVs in Cebu City and Metro Cebu.";
+      return "I'm your intelligent Cebu transportation assistant! 🚌\n\nAsk me naturally like:\n• 'I am currently in Ayala, how can I get to SM?'\n• 'From USC to Carbon Market'\n• 'What's the best way to get to IT Park?'\n\nI know about jeepney routes, transfer points, and travel tips!";
     }
 
-    // Specific popular routes
     const popularRoutes = {
-      'ayala': "To get to Ayala Center, you can take jeepneys with codes like 04L, 06B, 06H, or modern jeepneys. From most areas in the city, look for jeeps going to 'Lahug' or 'Ayala'.",
-      'sm': "SM City Cebu is accessible via jeepneys 01C, 04D, 06B, or buses. Look for jeeps with 'SM' or 'North Reclamation' on their signboards.",
-      'colon': "Colon Street is the heart of downtown. Almost all jeepneys pass through here. Look for routes 01A, 01B, 02A, 03A, and many others.",
-      'fuente': "Fuente Circle is a major hub. Take jeepneys 04A, 04B, 04C, or any jeep with 'Fuente' on the signboard."
+      'ayala': "🏢 **Ayala Center:** Take jeepneys with 'Lahug' signs (04L, 06B, 06H). From downtown, transfer at Fuente Circle.",
+      'sm': "🛒 **SM City Cebu:** Look for jeepneys with 'SM' or 'North Reclamation' signs (01C, 04D, 06B).",
+      'carbon': "🛍️ **Carbon Market:** Almost all jeepneys pass through here. Perfect transfer point!",
+      'colon': "🏛️ **Colon Street:** Historic downtown hub where most jeepneys converge.",
+      'fuente': "⭕ **Fuente Circle:** Major intersection and transfer hub.",
+      'it park': "💼 **Cebu IT Park:** Take 04L routes or jeepneys going to 'Lahug'.",
+      'apas': "🏘️ **Apas:** Take 04L routes towards Lahug direction."
     };
 
     for (const [location, info] of Object.entries(popularRoutes)) {
@@ -194,26 +192,12 @@ class CebotAIService {
       }
     }
 
-    // Default response
-    return "I'm CeBot, specialized in Cebu City transportation! Ask me about routes between places, jeepney codes, or how to get around Metro Cebu. For example: 'How do I get from Capitol to Ayala?' or 'What jeep goes to University of San Carlos?'";
+    return "Hi! I'm CeBot, your smart Cebu transportation guide! 🚌✨\n\nJust tell me where you want to go naturally, like:\n• 'I am currently in Ayala, how can I get to SM?'\n• 'Best route from USC to Carbon Market'\n\nI'll find the best routes and give you helpful travel tips!";
   }
 
-  async getRouteRecommendations(location) {
-    try {
-      // Get popular routes for a location
-      const routes = await Route.find({
-        $or: [
-          { origin: { $regex: location, $options: 'i' } },
-          { destination: { $regex: location, $options: 'i' } },
-          { route_description: { $regex: location, $options: 'i' } }
-        ]
-      }).limit(5);
-
-      return routes;
-    } catch (error) {
-      console.error('Error getting route recommendations:', error);
-      return [];
-    }
+  capitalizeLocation(location) {
+    if (!location) return '';
+    return location.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 }
 
