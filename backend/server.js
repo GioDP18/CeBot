@@ -40,12 +40,30 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api', routes);
 app.use('/api/chat', dialogflowRoutes);
 
-// Health check endpoint with API prefix
-app.get('/api/health', (req, res) => {
+// Health check endpoint
+app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
     message: 'CeBot API is running',
     timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/envs', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'CeBot environment variables',
+    timestamp: new Date().toISOString(),
+    env: {
+      NODE_ENV: process.env.NODE_ENV,
+      MONGODB_URI: process.env.MONGODB_URI,
+      GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      DIALOGFLOW_PROJECT_ID: process.env.DIALOGFLOW_PROJECT_ID,
+      DIALOGFLOW_LANGUAGE_CODE: process.env.DIALOGFLOW_LANGUAGE_CODE,
+      MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
+      JWT_SECRET: process.env.JWT_SECRET,
+      CORS_ORIGIN: process.env.CORS_ORIGIN
+    }
   });
 });
 
