@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../utils/api';
 
 // Async thunk for fetching all routes
 export const fetchAllRoutes = createAsyncThunk(
   'routes/fetchAll',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/api/routes');
+      const response = await api.get('/api/routes');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to fetch routes');
@@ -19,7 +19,7 @@ export const searchRoutes = createAsyncThunk(
   'routes/search',
   async ({ origin, destination }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/routes/search', {
+      const response = await api.post('/api/routes/search', {
         origin,
         destination
       });
@@ -35,7 +35,7 @@ export const getRouteByCode = createAsyncThunk(
   'routes/getByCode',
   async (code, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/routes/${code}`);
+      const response = await api.get(`/api/routes/${code}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to get route');
@@ -48,7 +48,7 @@ export const getRoutesByType = createAsyncThunk(
   'routes/getByType',
   async (type, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/routes/type/${type}`);
+      const response = await api.get(`/api/routes/type/${type}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to get routes by type');
@@ -61,7 +61,7 @@ export const getRouteStats = createAsyncThunk(
   'routes/getStats',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/api/routes/stats/summary');
+      const response = await api.get('/api/routes/stats/summary');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to get route stats');

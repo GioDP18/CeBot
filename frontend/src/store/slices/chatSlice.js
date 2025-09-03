@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../utils/api';
 
 // Async thunk for sending chat messages
 export const sendChatMessage = createAsyncThunk(
   'chat/sendMessage',
   async ({ message, sessionId }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/chat/message', {
+      const response = await api.post('/api/chat/message', {
         message,
         sessionId
       });
@@ -22,7 +22,7 @@ export const getChatHistory = createAsyncThunk(
   'chat/getHistory',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/api/chat/history');
+      const response = await api.get('/api/chat/history');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Failed to get chat history');
