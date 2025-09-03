@@ -133,12 +133,28 @@ const Chatbot = () => {
   // Auto-scroll to bottom when new messages arrive or typing changes
   useEffect(() => {
     if (messagesEndRef.current) {
+      // Add a small delay to ensure the DOM is updated
+      const timer = setTimeout(() => {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest'
+        });
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [messages, isTyping]);
+
+  // Additional smooth scroll when user sends a message
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ 
         behavior: 'smooth',
         block: 'end'
       });
     }
-  }, [messages, isTyping]);
+  };
 
   // Handle sending message
   const handleSendMessage = async () => {
@@ -148,6 +164,9 @@ const Chatbot = () => {
     dispatch(addUserMessage(message));
     setInputMessage('');
     setIsTyping(true);
+
+    // Immediately scroll to show the user's message
+    setTimeout(() => scrollToBottom(), 50);
 
     try {
       // In production or when WebSocket is not connected, use HTTP API
@@ -273,6 +292,7 @@ const Chatbot = () => {
                 minHeight: 0,
                 overflow: 'auto', 
                 mb: 2,
+                scrollBehavior: 'smooth',
                 '&::-webkit-scrollbar': {
                   width: '8px',
                 },
@@ -283,12 +303,15 @@ const Chatbot = () => {
                 '&::-webkit-scrollbar-thumb': {
                   backgroundColor: '#c1c1c1',
                   borderRadius: '4px',
+                  transition: 'background-color 0.2s ease',
                   '&:hover': {
                     backgroundColor: '#a8a8a8',
                   },
                 },
                 scrollbarWidth: 'thin',
                 scrollbarColor: '#c1c1c1 #f1f1f1',
+                // Enhanced smooth scrolling
+                scrollPaddingBottom: '20px',
               }}>
                 <List sx={{ pb: 0 }}>
                   {messages.map((msg, index) => (
@@ -305,7 +328,8 @@ const Chatbot = () => {
                           color: msg.sender === 'user' ? 'white' : 'text.primary',
                           borderRadius: msg.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                           wordBreak: 'break-word',
-                          animation: 'fadeIn 0.3s ease-in'
+                          animation: 'fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          transition: 'all 0.2s ease'
                         }}
                       >
                         <Typography variant="body1" sx={{ lineHeight: 1.4 }}>

@@ -37,10 +37,30 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         '@global': {
+          // Smooth scrolling for the entire app
+          html: {
+            scrollBehavior: 'smooth',
+          },
+          // Enhanced fade-in animation
           '@keyframes fadeIn': {
             '0%': {
               opacity: 0,
-              transform: 'translateY(10px)',
+              transform: 'translateY(15px) scale(0.95)',
+            },
+            '50%': {
+              opacity: 0.7,
+              transform: 'translateY(5px) scale(0.98)',
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0) scale(1)',
+            },
+          },
+          // Smooth slide-up animation for messages
+          '@keyframes slideUp': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(20px)',
             },
             '100%': {
               opacity: 1,
