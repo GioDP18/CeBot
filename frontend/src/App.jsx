@@ -55,6 +55,9 @@ const theme = createTheme({
 });
 
 function App() {
+  console.log('API URL:', import.meta.env.VITE_API_URL);
+  console.log('MAPBOX Token:', import.meta.env.VITE_MAPBOX_ACCESS_TOKEN);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
