@@ -130,10 +130,15 @@ const Chatbot = () => {
     };
   }, [dispatch, connectionAttempts]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or typing changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end'
+      });
+    }
+  }, [messages, isTyping]);
 
   // Handle sending message
   const handleSendMessage = async () => {
@@ -249,50 +254,138 @@ const Chatbot = () => {
         {/* Chat Interface */}
         <Grid item xs={12} md={8}>
           <Card sx={{ 
-            height: { xs: '60vh', sm: '65vh', md: '70vh' }, 
+            height: { xs: '70vh', sm: '75vh', md: '80vh' }, 
             display: 'flex', 
             flexDirection: 'column',
-            mb: { xs: 2, md: 0 } 
+            mb: { xs: 2, md: 0 },
+            overflow: 'hidden'
           }}>
-            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ 
+              height: '100%',
+              display: 'flex', 
+              flexDirection: 'column',
+              p: { xs: 1, sm: 2 },
+              '&:last-child': { pb: { xs: 1, sm: 2 } }
+            }}>
               {/* Messages Area */}
-              <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
-                <List>
+              <Box sx={{ 
+                flex: '1 1 0',
+                minHeight: 0,
+                overflow: 'auto', 
+                mb: 2,
+                '&::-webkit-scrollbar': {
+                  width: '8px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  backgroundColor: '#f1f1f1',
+                  borderRadius: '4px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: '#c1c1c1',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#a8a8a8',
+                  },
+                },
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#c1c1c1 #f1f1f1',
+              }}>
+                <List sx={{ pb: 0 }}>
                   {messages.map((msg, index) => (
                     <ListItem key={msg.id || index} sx={{ 
-                      justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start' 
+                      justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                      py: 0.5
                     }}>
                       <Paper
-                        elevation={1}
+                        elevation={msg.sender === 'user' ? 2 : 1}
                         sx={{
                           p: { xs: 1.5, md: 2 },
-                          maxWidth: { xs: '80%', md: '70%' },
+                          maxWidth: { xs: '85%', md: '75%' },
                           backgroundColor: msg.sender === 'user' ? 'primary.main' : 'grey.100',
                           color: msg.sender === 'user' ? 'white' : 'text.primary',
-                          borderRadius: 2,
-                          wordBreak: 'break-word'
+                          borderRadius: msg.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                          wordBreak: 'break-word',
+                          animation: 'fadeIn 0.3s ease-in'
                         }}
                       >
-                        <Typography variant="body1">{msg.message}</Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.7, mt: 1, display: 'block' }}>
+                        <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
+                          {msg.message}
+                        </Typography>
+                        <Typography 
+                          variant="caption" 
+                          sx={{ 
+                            opacity: 0.7, 
+                            mt: 1, 
+                            display: 'block',
+                            fontSize: '0.7rem'
+                          }}
+                        >
                           {new Date(msg.timestamp).toLocaleTimeString()}
                         </Typography>
                       </Paper>
                     </ListItem>
                   ))}
+                  
+                  {/* Bot Typing Indicator */}
                   {isTyping && (
-                    <ListItem sx={{ justifyContent: 'flex-start' }}>
-                      <Paper elevation={1} sx={{ p: 2, backgroundColor: 'grey.100' }}>
-                        <Typography variant="body1">CeBot is typing...</Typography>
+                    <ListItem sx={{ justifyContent: 'flex-start', py: 0.5 }}>
+                      <Paper 
+                        elevation={1} 
+                        sx={{ 
+                          p: 2, 
+                          backgroundColor: 'grey.100',
+                          borderRadius: '18px 18px 18px 4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            CeBot is typing
+                          </Typography>
+                          <Box sx={{ display: 'flex', gap: 0.3 }}>
+                            {[0, 1, 2].map((index) => (
+                              <Box
+                                key={index}
+                                sx={{
+                                  width: 4,
+                                  height: 4,
+                                  borderRadius: '50%',
+                                  backgroundColor: 'primary.main',
+                                  animation: `typingDot 1.4s infinite ease-in-out`,
+                                  animationDelay: `${index * 0.16}s`,
+                                  '@keyframes typingDot': {
+                                    '0%, 80%, 100%': {
+                                      opacity: 0.3,
+                                      transform: 'scale(0.8)',
+                                    },
+                                    '40%': {
+                                      opacity: 1,
+                                      transform: 'scale(1)',
+                                    },
+                                  },
+                                }}
+                              />
+                            ))}
+                          </Box>
+                        </Box>
                       </Paper>
                     </ListItem>
                   )}
+                  
                   <div ref={messagesEndRef} />
                 </List>
               </Box>
 
               {/* Input Area */}
-              <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
+              <Box sx={{ 
+                flexShrink: 0,
+                display: 'flex', 
+                gap: 1, 
+                alignItems: 'flex-end',
+                pt: 1
+              }}>
                 <TextField
                   fullWidth
                   multiline
