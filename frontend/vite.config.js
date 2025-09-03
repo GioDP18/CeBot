@@ -24,6 +24,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   define: {
     global: 'globalThis',

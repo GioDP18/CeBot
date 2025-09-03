@@ -30,25 +30,7 @@ app.use(helmet());
 app.use(compression());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://cebot-nine.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:5174', 
-      'http://localhost:5175',
-      'http://localhost:3000'
-    ];
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
   credentials: true
 }));
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -64,24 +46,6 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     message: 'CeBot API is running',
     timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/envs', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    message: 'CeBot environment variables',
-    timestamp: new Date().toISOString(),
-    env: {
-      NODE_ENV: process.env.NODE_ENV,
-      MONGODB_URI: process.env.MONGODB_URI,
-      GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      DIALOGFLOW_PROJECT_ID: process.env.DIALOGFLOW_PROJECT_ID,
-      DIALOGFLOW_LANGUAGE_CODE: process.env.DIALOGFLOW_LANGUAGE_CODE,
-      MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
-      JWT_SECRET: process.env.JWT_SECRET,
-      CORS_ORIGIN: process.env.CORS_ORIGIN
-    }
   });
 });
 
