@@ -97,10 +97,24 @@ const Dashboard = () => {
           gutterBottom 
           fontWeight="bold"
           sx={{ 
-            fontSize: { xs: '1.8rem', sm: '2.2rem', md: '3rem' } 
+            fontSize: { xs: '1.8rem', sm: '2.2rem', md: '3rem' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 2
           }}
         >
-          🚌 Welcome to CeBot
+          <img 
+            src="/logo.png" 
+            alt="CeBot Logo" 
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '8px',
+              objectFit: 'contain'
+            }}
+          />
+          Welcome to CeBot
         </Typography>
         <Typography 
           variant="h6" 

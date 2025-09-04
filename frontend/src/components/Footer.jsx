@@ -47,7 +47,17 @@ const Footer = () => {
                   fontSize: { xs: '1.25rem', md: '1.5rem' }
                 }}
               >
-                🚌 CeBot
+                <img 
+                  src="/logo.png" 
+                  alt="CeBot Logo" 
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '4px',
+                    objectFit: 'contain'
+                  }}
+                />
+                CeBot
               </Typography>
               <Chip
                 label="Cebu Transport Assistant"

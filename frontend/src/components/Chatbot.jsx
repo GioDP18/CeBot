@@ -276,24 +276,35 @@ const Chatbot = () => {
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
-      <Typography 
-        variant="h4" 
-        gutterBottom 
-        align="center" 
-        color="primary"
-        sx={{ 
-          fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.125rem' },
-          mb: { xs: 2, md: 3 }
-        }}
-      >
-        🚌 CeBot - Cebu Transport Assistant
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: { xs: 2, md: 3 } }}>
+        <img 
+          src="/logo.png" 
+          alt="CeBot Logo" 
+          style={{ 
+            height: '48px', 
+            width: '48px', 
+            marginRight: '12px',
+            borderRadius: '8px'
+          }} 
+        />
+        <Typography 
+          variant="h4" 
+          component="h1"
+          color="primary"
+          sx={{ 
+            fontWeight: 'bold',
+            fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.125rem' }
+          }}
+        >
+          CeBot - Cebu Transport Assistant
+        </Typography>
         {/* <Chip 
           label={selectedModel === 'local' ? 'Local AI' : 'OpenAI GPT-3.5'} 
           size="small" 
           color={selectedModel === 'local' ? 'primary' : 'secondary'}
           sx={{ ml: 1, fontSize: '0.7rem' }}
         /> */}
-      </Typography>
+      </Box>
       
       <Grid container spacing={{ xs: 2, md: 3 }}>
         {/* Chat Interface */}
@@ -392,7 +403,7 @@ const Chatbot = () => {
                       >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                           <Typography variant="body2" color="text.secondary">
-                            CeBot ({selectedModel === 'local' ? 'Local AI' : 'OpenAI'}) is typing
+                            CeBot is typing
                           </Typography>
                           <Box sx={{ display: 'flex', gap: 0.3 }}>
                             {[0, 1, 2].map((index) => (
@@ -467,7 +478,7 @@ const Chatbot = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={`Ask me about Cebu transport routes... (Using ${selectedModel === 'local' ? 'Local AI' : 'OpenAI'})`}
+                  placeholder={`Ask me about Cebu transport routes...`}
                   variant="outlined"
                   size="small"
                   disabled={isLoading}

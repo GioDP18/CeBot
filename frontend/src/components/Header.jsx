@@ -62,7 +62,17 @@ const Header = () => {
                 gap: 1
               }}
             >
-              🚌 CeBot
+              <img 
+                src="/logo.png" 
+                alt="CeBot Logo" 
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '6px',
+                  objectFit: 'contain'
+                }}
+              />
+              CeBot
             </Typography>
             {!isMobile && (
               <Chip
