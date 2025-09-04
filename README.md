@@ -4,13 +4,14 @@
 
 ## ✨ Features
 
-- 🤖 **AI-Powered Chat**: Natural language processing for transport queries
+- 🤖 **Dual AI Models**: Choose between Local AI and OpenAI GPT-3.5 for responses
 - 🗺️ **Interactive Maps**: Visual representation of all transport routes
 - 🔍 **Smart Search**: Find routes by origin, destination, or route code
 - 📱 **Real-time Updates**: WebSocket integration for live chat
 - 📊 **Route Statistics**: Comprehensive transport data analytics
 - 🎨 **Modern UI**: Material-UI based responsive design
 - 📍 **Location-based**: Uses actual Cebu transport route data
+- 💬 **Natural Language**: Process queries in conversational Filipino/English
 
 ## 🏗️ Architecture
 
@@ -322,6 +323,7 @@ git push heroku main
 NODE_ENV=production
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/cebot
 CORS_ORIGIN=https://yourdomain.com
+OPENAI_API_KEY=sk-your-openai-api-key-here  # Optional: For OpenAI integration
 ```
 
 ## 🧪 Testing

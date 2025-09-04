@@ -13,6 +13,7 @@ const routes = require('./routes');
 const dialogflowRoutes = require('./routes/dialogflow');
 const socketHandler = require('./socket/socketHandler');
 const cebotAIService = require('./services/cebotAIService');
+const openaiService = require('./services/openaiService');
 
 const app = express();
 const server = http.createServer(app);
@@ -30,7 +31,7 @@ const io = socketIo(server, {
 // Connect to MongoDB
 connectDB();
 
-// Initialize CeBot AI Service
+// Initialize AI Services
 cebotAIService.initialize().then(success => {
   if (success) {
     console.log('🤖 CeBot AI Service ready');
@@ -39,6 +40,17 @@ cebotAIService.initialize().then(success => {
   }
 }).catch(error => {
   console.error('❌ Failed to initialize CeBot AI Service:', error);
+});
+
+// Initialize OpenAI Service (optional)
+openaiService.initialize().then(success => {
+  if (success) {
+    console.log('🧠 OpenAI Service ready');
+  } else {
+    console.warn('⚠️  OpenAI Service not available - check OPENAI_API_KEY');
+  }
+}).catch(error => {
+  console.warn('⚠️  OpenAI Service initialization failed:', error.message);
 });
 
 // Middleware

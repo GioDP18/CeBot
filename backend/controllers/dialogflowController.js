@@ -2,6 +2,7 @@ const dialogflow = require('@google-cloud/dialogflow');
 const Route = require('../models/Route');
 const getGoogleCredentials = require('../config/googleCredentials');
 const cebotAIService = require('../services/cebotAIService');
+const openaiService = require('../services/openaiService');
 
 // Initialize Dialogflow client with error handling
 let sessionClient;
@@ -22,10 +23,10 @@ try {
   sessionClient = null;
 }
 
-// Process user message through CeBot AI Service
+// Process user message through selected AI Service
 exports.processMessage = async (req, res) => {
   try {
-    const { message, sessionId } = req.body;
+    const { message, sessionId, model = 'local' } = req.body;
     
     if (!message) {
       return res.status(400).json({
@@ -34,8 +35,15 @@ exports.processMessage = async (req, res) => {
       });
     }
 
-    // Use CeBot AI Service for processing
-    const aiResult = await cebotAIService.processMessage(message, sessionId);
+    let aiResult;
+    
+    // Choose AI service based on model parameter
+    if (model === 'openai') {
+      aiResult = await openaiService.processMessage(message, sessionId);
+    } else {
+      // Default to local CeBot AI service
+      aiResult = await cebotAIService.processMessage(message, sessionId);
+    }
 
     const response = {
       success: true,
@@ -43,7 +51,8 @@ exports.processMessage = async (req, res) => {
         text: aiResult.response,
         intent: aiResult.routeContext ? 'route.search' : 'general.chat',
         parameters: aiResult.routeContext || {},
-        sessionId: aiResult.sessionId || sessionId || 'default-session'
+        sessionId: aiResult.sessionId || sessionId || 'default-session',
+        provider: aiResult.provider || (model === 'openai' ? 'openai' : 'local')
       },
       searchResults: aiResult.searchResults,
       suggestions: aiResult.routeContext ? await generateSuggestions(aiResult.routeContext) : null

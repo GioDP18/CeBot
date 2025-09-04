@@ -16,14 +16,20 @@ import {
   IconButton,
   Alert,
   CircularProgress,
-  Grid
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
   Send as SendIcon,
   Clear as ClearIcon,
   Search as SearchIcon,
   DirectionsBus as BusIcon,
-  DirectionsCar as JeepIcon
+  DirectionsCar as JeepIcon,
+  Memory as LocalIcon,
+  OpenInNew as OpenAIIcon
 } from '@mui/icons-material';
 import { io } from 'socket.io-client';
 import {
@@ -52,6 +58,7 @@ const Chatbot = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
+  const [selectedModel, setSelectedModel] = useState('openai'); // 'local' or 'openai'
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
@@ -171,11 +178,12 @@ const Chatbot = () => {
     setTimeout(() => scrollToBottom(), 50);
 
     try {
-      // Always use HTTP API for our new AI service
-      console.log('Using CeBot AI Service API for message sending');
+      // Always use HTTP API for our AI services
+      console.log(`Using ${selectedModel === 'local' ? 'CeBot AI Service' : 'OpenAI'} API for message sending`);
       const result = await dispatch(sendChatMessage({ 
         message, 
-        sessionId: 'user-session' 
+        sessionId: 'user-session',
+        model: selectedModel
       })).unwrap();
 
       // Handle the AI service response
@@ -279,6 +287,12 @@ const Chatbot = () => {
         }}
       >
         🚌 CeBot - Cebu Transport Assistant
+        {/* <Chip 
+          label={selectedModel === 'local' ? 'Local AI' : 'OpenAI GPT-3.5'} 
+          size="small" 
+          color={selectedModel === 'local' ? 'primary' : 'secondary'}
+          sx={{ ml: 1, fontSize: '0.7rem' }}
+        /> */}
       </Typography>
       
       <Grid container spacing={{ xs: 2, md: 3 }}>
@@ -378,7 +392,7 @@ const Chatbot = () => {
                       >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                           <Typography variant="body2" color="text.secondary">
-                            CeBot is typing
+                            CeBot ({selectedModel === 'local' ? 'Local AI' : 'OpenAI'}) is typing
                           </Typography>
                           <Box sx={{ display: 'flex', gap: 0.3 }}>
                             {[0, 1, 2].map((index) => (
@@ -422,6 +436,30 @@ const Chatbot = () => {
                 alignItems: 'flex-end',
                 pt: 1
               }}>
+                {/* Model Selector */}
+                {/* <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Model</InputLabel>
+                  <Select
+                    value={selectedModel}
+                    label="Model"
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                    disabled={isLoading}
+                  >
+                    <MenuItem value="local">
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <LocalIcon fontSize="small" />
+                        Local
+                      </Box>
+                    </MenuItem>
+                    <MenuItem value="openai">
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <OpenAIIcon fontSize="small" />
+                        OpenAI
+                      </Box>
+                    </MenuItem>
+                  </Select>
+                </FormControl> */}
+
                 <TextField
                   fullWidth
                   multiline
@@ -429,7 +467,7 @@ const Chatbot = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask me about Cebu transport routes..."
+                  placeholder={`Ask me about Cebu transport routes... (Using ${selectedModel === 'local' ? 'Local AI' : 'OpenAI'})`}
                   variant="outlined"
                   size="small"
                   disabled={isLoading}

@@ -4,11 +4,12 @@ import api from '../../utils/api';
 // Async thunk for sending chat messages
 export const sendChatMessage = createAsyncThunk(
   'chat/sendMessage',
-  async ({ message, sessionId }, { rejectWithValue }) => {
+  async ({ message, sessionId, model = 'local' }, { rejectWithValue }) => {
     try {
       const response = await api.post('/api/chat/message', {
         message,
-        sessionId
+        sessionId,
+        model
       });
       return response.data;
     } catch (error) {
