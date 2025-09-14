@@ -121,10 +121,18 @@ Key responsibilities:
 4. Be friendly, conversational, and use some Filipino expressions naturally
 5. Always prioritize safety and convenience for travelers
 
+IMPORTANT ROUTE LOGIC:
+- ALL ROUTE COORDINATES ARE BIDIRECTIONAL: Routes work in both directions
+- If a route shows "Apas to Carbon" with code 17B, it also works "Carbon to Apas" with the same 17B code
+- When users ask for directions between two locations, the same route code applies regardless of direction
+- Example: 17B works for both "Apas → Carbon" AND "Carbon → Apas"
+- Always mention that the route works in both directions when applicable
+
 Guidelines:
 - Use a warm, helpful tone but don't start every message with greetings
 - Only use Filipino expressions like "Kumusta!", "Salamat", "Ingat" when naturally appropriate
 - When route information is provided, present it clearly and suggest practical tips
+- ALWAYS clarify that routes work bidirectionally when showing route codes
 - If no direct routes are found, offer alternatives or suggestions
 - Keep responses concise but informative
 - Focus on practical transportation advice for Metro Cebu
@@ -140,14 +148,15 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
       prompt += `From: ${routeContext.query.origin}\n`;
       prompt += `To: ${routeContext.query.destination}\n\n`;
       
-      prompt += `Available routes:\n`;
+      prompt += `Available routes (BIDIRECTIONAL - work in both directions):\n`;
       routeContext.results.forEach((route, index) => {
         prompt += `${index + 1}. ${route.route_code} (${route.type}): ${route.origin} → ${route.destination}`;
         if (route.notes) prompt += ` - ${route.notes}`;
         prompt += `\n`;
       });
 
-      prompt += `\nPlease provide a helpful response that includes these route options and any practical advice for the journey.`;
+      prompt += `\nIMPORTANT: These routes work BOTH ways! If showing Apas→Carbon with code 17B, the same 17B also works Carbon→Apas.`;
+      prompt += `\nPlease provide a helpful response that includes these route options and emphasize the bidirectional nature.`;
     } else if (routeContext && routeContext.query) {
       prompt += `Route search attempted but no direct routes found:\n`;
       prompt += `From: ${routeContext.query.origin || 'Not specified'}\n`;
@@ -222,10 +231,10 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
       let routes = [];
 
       if (origin && destination) {
-        // Search for routes that match both origin and destination more precisely
+        // Search for routes that connect both locations (bidirectional)
         routes = await Route.find({
           $or: [
-            // Direct routes from origin to destination
+            // Forward direction: origin to destination
             {
               $and: [
                 { 
@@ -238,6 +247,23 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
                   $or: [
                     { destination: { $regex: new RegExp(`\\b${destination}\\b`, 'i') } },
                     { destination: { $regex: destination, $options: 'i' } }
+                  ]
+                }
+              ]
+            },
+            // Reverse direction: destination to origin (bidirectional support)
+            {
+              $and: [
+                { 
+                  $or: [
+                    { origin: { $regex: new RegExp(`\\b${destination}\\b`, 'i') } },
+                    { origin: { $regex: destination, $options: 'i' } }
+                  ]
+                },
+                { 
+                  $or: [
+                    { destination: { $regex: new RegExp(`\\b${origin}\\b`, 'i') } },
+                    { destination: { $regex: origin, $options: 'i' } }
                   ]
                 }
               ]

@@ -107,7 +107,11 @@ class CebotAIService {
       
       if (routeQuery.origin && routeQuery.destination) {
         searchQueries = [
+          // Forward direction: origin to destination
           { origin: { $regex: routeQuery.origin, $options: 'i' }, destination: { $regex: routeQuery.destination, $options: 'i' } },
+          // Reverse direction: destination to origin (bidirectional support)
+          { origin: { $regex: routeQuery.destination, $options: 'i' }, destination: { $regex: routeQuery.origin, $options: 'i' } },
+          // Route descriptions (both directions)
           { route_description: { $regex: routeQuery.origin + '.*' + routeQuery.destination, $options: 'i' } },
           { route_description: { $regex: routeQuery.destination + '.*' + routeQuery.origin, $options: 'i' } }
         ];
@@ -151,6 +155,12 @@ class CebotAIService {
           if (route.notes) response += '\n   💡 ' + route.notes;
           response += '\n\n';
         });
+        
+        // Add bidirectional note
+        if (routeContext.query.origin && routeContext.query.destination) {
+          response += '✅ **Note:** These routes work in BOTH directions! ';
+          response += 'You can use the same route codes for your return trip.\n\n';
+        }
         
         response += 'Would you like more details about any of these routes?';
         return response;
