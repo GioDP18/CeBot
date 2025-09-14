@@ -176,14 +176,14 @@ const RouteSearch = () => {
       paint: {
         'circle-radius': [
           'case',
-          ['==', ['get', 'pointType'], 'via'], 6,
+          ['==', ['get', 'pointType'], 'route_landmarks'], 6,
           8
         ],
         'circle-color': [
           'case',
           ['==', ['get', 'pointType'], 'origin'], '#4caf50',
           ['==', ['get', 'pointType'], 'destination'], '#f44336',
-          ['==', ['get', 'pointType'], 'via'], '#ff9800',
+          ['==', ['get', 'pointType'], 'route_landmarks'], '#ff9800',
           '#1976d2' // default
         ],
         'circle-stroke-width': 2,
@@ -553,9 +553,9 @@ const RouteSearch = () => {
             </Box>
             
             {/* Via points */}
-            {selectedRoute.via && selectedRoute.via.length > 0 && (
+            {selectedRoute.route_landmarks && selectedRoute.route_landmarks.length > 0 && (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                <strong>Via:</strong> {selectedRoute.via.join(', ')}
+                <strong>Via:</strong> {selectedRoute.route_landmarks.join(', ')}
               </Typography>
             )}
             

@@ -23,7 +23,7 @@ const routeSchema = new mongoose.Schema({
     required: true,
     index: true
   },
-  via: [{
+  route_landmarks: [{
     type: String
   }],
   route_coordinates: {

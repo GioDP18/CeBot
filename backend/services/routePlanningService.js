@@ -289,14 +289,23 @@ class RoutePlanningService {
   generateDirectInstructions(routes, origin, destination) {
     if (routes.length === 1) {
       const route = routes[0];
-      return `🚌 Take **${route.route_code}** (${route.type}) from ${origin} to ${destination}.\n\n✅ **Note:** This route works in BOTH directions!`;
+      return `🚌 **Direct Route Available!**\n\n` +
+             `Take **${route.route_code}** (${route.type})\n` +
+             `📍 From: ${origin}\n` +
+             `📍 To: ${destination}\n\n` +
+             `✅ **Note:** This route works in BOTH directions!`;
     } else {
-      let instructions = `🚌 **Direct routes available from ${origin} to ${destination}:**\n\n`;
-      routes.forEach(route => {
-        instructions += `• **${route.route_code}** (${route.type}): ${route.origin} → ${route.destination}\n`;
-        if (route.notes) instructions += `  💡 ${route.notes}\n`;
+      let instructions = `🚌 **Multiple Direct Routes Available!**\n\n` +
+                        `From **${origin}** to **${destination}**:\n\n`;
+      
+      routes.forEach((route, index) => {
+        instructions += `**Option ${index + 1}:** ${route.route_code} (${route.type})\n`;
+        instructions += `   Route: ${route.origin} → ${route.destination}\n`;
+        if (route.notes) instructions += `   💡 ${route.notes}\n`;
+        instructions += `\n`;
       });
-      instructions += `\n✅ **Note:** These routes work in BOTH directions!`;
+      
+      instructions += `✅ **Note:** All these routes work in BOTH directions!`;
       return instructions;
     }
   }
@@ -307,12 +316,17 @@ class RoutePlanningService {
   generateMultiRideInstructions(connection, origin, destination) {
     const { firstRoute, secondRoute, connectionPoint } = connection;
     
-    return `🚌 **Multi-ride journey from ${origin} to ${destination}:**\n\n` +
-           `**Step 1:** Take **${firstRoute.route_code}** from ${origin} and get off at **${connectionPoint}**\n` +
-           `**Step 2:** Transfer to **${secondRoute.route_code}** and ride to ${destination}\n\n` +
+    return `🚌 **Multi-Ride Journey Plan**\n\n` +
+           `From **${origin}** to **${destination}**:\n\n` +
+           `**Step 1:** 🚌 Take **${firstRoute.route_code}**\n` +
+           `   • Board at: ${origin}\n` +
+           `   • Get off at: **${connectionPoint}**\n\n` +
+           `**Step 2:** 🚌 Transfer to **${secondRoute.route_code}**\n` +
+           `   • Board at: **${connectionPoint}**\n` +
+           `   • Get off at: ${destination}\n\n` +
            `📍 **Transfer Point:** ${connectionPoint}\n` +
-           `🎯 **Total Rides:** 2 (1 transfer)\n\n` +
-           `💡 **Tip:** Look for jeepneys with the route codes displayed on the front!`;
+           `🎯 **Total Rides:** 2 jeepneys (1 transfer)\n\n` +
+           `💡 **Tip:** Keep an eye out for the route codes displayed on the front of each jeepney!`;
   }
 
   /**
@@ -321,13 +335,20 @@ class RoutePlanningService {
   generateThreeRideInstructions(journey, origin, destination) {
     const { firstRoute, middleRoute, lastRoute, firstConnection, secondConnection } = journey;
     
-    return `🚌 **Multi-ride journey from ${origin} to ${destination}:**\n\n` +
-           `**Step 1:** Take **${firstRoute.route_code}** from ${origin} and get off at **${firstConnection}**\n` +
-           `**Step 2:** Transfer to **${middleRoute.route_code}** and ride to **${secondConnection}**\n` +
-           `**Step 3:** Transfer to **${lastRoute.route_code}** and ride to ${destination}\n\n` +
+    return `🚌 **Complex Multi-Ride Journey Plan**\n\n` +
+           `From **${origin}** to **${destination}**:\n\n` +
+           `**Step 1:** 🚌 Take **${firstRoute.route_code}**\n` +
+           `   • Board at: ${origin}\n` +
+           `   • Get off at: **${firstConnection}**\n\n` +
+           `**Step 2:** 🚌 Transfer to **${middleRoute.route_code}**\n` +
+           `   • Board at: **${firstConnection}**\n` +
+           `   • Get off at: **${secondConnection}**\n\n` +
+           `**Step 3:** 🚌 Transfer to **${lastRoute.route_code}**\n` +
+           `   • Board at: **${secondConnection}**\n` +
+           `   • Get off at: ${destination}\n\n` +
            `📍 **Transfer Points:** ${firstConnection}, ${secondConnection}\n` +
-           `🎯 **Total Rides:** 3 (2 transfers)\n\n` +
-           `💡 **Tip:** This journey requires 2 transfers, but it will get you to your destination!`;
+           `🎯 **Total Rides:** 3 jeepneys (2 transfers)\n\n` +
+           `💡 **Tip:** This journey requires patience but will get you to your destination! Allow extra time for transfers.`;
   }
 }
 

@@ -39,7 +39,7 @@ const seedJeepneyRoutes = async (jeepneyRoutes) => {
         type: route.type,
         origin: route.origin,
         destination: route.destination,
-        via: route.via || [],
+        route_landmarks: route.route_landmarks || [],
         route_coordinates: route.route_coordinates || {},
         notes: route.notes || '',
         last_verified: new Date(route.last_verified)
@@ -78,7 +78,7 @@ const seedModernJeepneyRoutes = async (modernJeepneyRoutes) => {
         type: route.type,
         origin: route.origin,
         destination: route.destination,
-        via: route.via || [],
+        route_landmarks: route.route_landmarks || [],
         route_coordinates: route.route_coordinates || {},
         notes: route.notes || '',
         last_verified: new Date(route.last_verified)

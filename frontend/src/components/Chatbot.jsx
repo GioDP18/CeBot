@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 import {
   Box,
   Card,
@@ -369,9 +370,62 @@ const Chatbot = () => {
                           transition: 'all 0.2s ease'
                         }}
                       >
-                        <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
-                          {msg.message}
-                        </Typography>
+                        {msg.sender === 'bot' ? (
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => (
+                                <Typography 
+                                  variant="body1" 
+                                  sx={{ 
+                                    lineHeight: 1.6,
+                                    mb: 1,
+                                    '&:last-child': { mb: 0 }
+                                  }}
+                                >
+                                  {children}
+                                </Typography>
+                              ),
+                              strong: ({ children }) => (
+                                <Typography 
+                                  component="span" 
+                                  sx={{ 
+                                    fontWeight: 'bold',
+                                    color: 'inherit'
+                                  }}
+                                >
+                                  {children}
+                                </Typography>
+                              ),
+                              ul: ({ children }) => (
+                                <Box component="ul" sx={{ pl: 2, my: 0.5 }}>
+                                  {children}
+                                </Box>
+                              ),
+                              li: ({ children }) => (
+                                <Typography 
+                                  component="li" 
+                                  variant="body1"
+                                  sx={{ lineHeight: 1.6, mb: 0.3 }}
+                                >
+                                  {children}
+                                </Typography>
+                              )
+                            }}
+                          >
+                            {msg.message}
+                          </ReactMarkdown>
+                        ) : (
+                          <Typography 
+                            variant="body1" 
+                            sx={{ 
+                              lineHeight: 1.6,
+                              whiteSpace: 'pre-wrap',
+                              wordBreak: 'break-word'
+                            }}
+                          >
+                            {msg.message}
+                          </Typography>
+                        )}
                         <Typography 
                           variant="caption" 
                           sx={{ 

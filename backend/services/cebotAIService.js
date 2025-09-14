@@ -187,22 +187,26 @@ class CebotAIService {
       // Fallback to traditional handling for single location queries
       if (routeContext.foundRoutes && routeContext.results && routeContext.results.length > 0) {
         const routes = routeContext.results;
-        let response = 'Perfect! I found the routes for your trip';
+        let response = '🚌 **Route Search Results**\n\n';
         
-        if (routeContext.query.origin) response += ' from ' + this.capitalizeLocation(routeContext.query.origin);
-        if (routeContext.query.destination) response += ' to ' + this.capitalizeLocation(routeContext.query.destination);
-        response += ':\n\n';
+        if (routeContext.query.origin && routeContext.query.destination) {
+          response += `From **${this.capitalizeLocation(routeContext.query.origin)}** to **${this.capitalizeLocation(routeContext.query.destination)}**:\n\n`;
+        } else if (routeContext.query.destination) {
+          response += `Routes to **${this.capitalizeLocation(routeContext.query.destination)}**:\n\n`;
+        }
         
-        routes.forEach((route) => {
-          response += '🚌 **' + route.route_code + '** - ' + route.origin + ' to ' + route.destination;
-          if (route.fare) response += ' (₱' + route.fare + ')';
-          if (route.notes) response += '\n   💡 ' + route.notes;
-          response += '\n\n';
+        routes.forEach((route, index) => {
+          response += `**Route ${index + 1}:** ${route.route_code}\n`;
+          response += `   📍 ${route.origin} → ${route.destination}`;
+          if (route.fare) response += ` (₱${route.fare})`;
+          response += '\n';
+          if (route.notes) response += `   💡 ${route.notes}\n`;
+          response += '\n';
         });
         
         // Add bidirectional note
         if (routeContext.query.origin && routeContext.query.destination) {
-          response += '✅ **Note:** These routes work in BOTH directions! ';
+          response += '✅ **Note:** These routes work in BOTH directions!\n';
           response += 'You can use the same route codes for your return trip.\n\n';
         }
         
@@ -212,22 +216,38 @@ class CebotAIService {
         const origin = routeContext.query.origin ? this.capitalizeLocation(routeContext.query.origin) : null;
         const destination = routeContext.query.destination ? this.capitalizeLocation(routeContext.query.destination) : null;
         
-        let response = 'I understand you want to travel';
-        if (origin && destination) response += ' from ' + origin + ' to ' + destination;
-        else if (destination) response += ' to ' + destination;
-        response += '. While I don\'t have a direct route, here are some tips:\n\n';
+        let response = '🤔 **Route Planning Help**\n\n';
+        response += 'I understand you want to travel';
+        if (origin && destination) response += ` from **${origin}** to **${destination}**`;
+        else if (destination) response += ` to **${destination}**`;
+        response += '. While I don\'t have a direct route in my database, here are some helpful tips:\n\n';
         
-        response += '🚌 **Smart Travel Tips:**\n';
-        response += '• Most routes connect through Colon Street, Fuente Circle, or Carbon Market\n';
-        response += '• Try breaking your journey into 2 parts with a transfer\n';
-        response += '• Look for jeepneys going to nearby landmarks\n\n';
-        response += 'Ask me about specific landmarks like \'Routes to SM\' or \'How to get to Ayala\'';
+        response += '🚌 **Smart Travel Strategies:**\n\n';
+        response += '• **Major Transfer Points:** Most routes connect through:\n';
+        response += '   - Colon Street (downtown hub)\n';
+        response += '   - Fuente Circle (major intersection)\n';
+        response += '   - Carbon Market (central terminal)\n\n';
+        response += '• **Two-Part Journey:** Try breaking your trip into segments\n';
+        response += '• **Landmark Navigation:** Look for jeepneys going to nearby landmarks\n\n';
+        response += '💡 **Try asking:** "Routes to SM" or "How to get to Ayala"';
         return response;
       }
     }
 
     if (lowerMessage.includes('help')) {
-      return "I'm your intelligent Cebu transportation assistant! 🚌\n\nAsk me naturally like:\n• 'I am currently in Ayala, how can I get to SM?'\n• 'From USC to Carbon Market'\n• 'What's the best way to get to IT Park?'\n\nI know about jeepney routes, transfer points, and travel tips!";
+      return "🚌 **CeBot - Your Cebu Transportation Assistant**\n\n" +
+             "I'm here to help you navigate Cebu's jeepney routes!\n\n" +
+             "**Ask me naturally like:**\n\n" +
+             "• 'I am currently in Ayala, how can I get to SM?'\n" +
+             "• 'From USC to Carbon Market'\n" +
+             "• 'What's the best way to get to IT Park?'\n" +
+             "• 'How do I get from Apas to Ayala?'\n\n" +
+             "**I can help with:**\n" +
+             "✅ Direct route planning\n" +
+             "✅ Multi-ride journeys with transfers\n" +
+             "✅ Route recommendations\n" +
+             "✅ Travel tips and landmarks\n\n" +
+             "Just ask away! 😊";
     }
 
     const popularRoutes = {
@@ -246,7 +266,13 @@ class CebotAIService {
       }
     }
 
-    return "Hi! I'm CeBot, your smart Cebu transportation guide! 🚌✨\n\nJust tell me where you want to go naturally, like:\n• 'I am currently in Ayala, how can I get to SM?'\n• 'Best route from USC to Carbon Market'\n\nI'll find the best routes and give you helpful travel tips!";
+    return "👋 **Hi! I'm CeBot**\n\n" +
+           "Your smart Cebu transportation guide! 🚌✨\n\n" +
+           "**Just tell me where you want to go:**\n\n" +
+           "• 'I am currently in Ayala, how can I get to SM?'\n" +
+           "• 'Best route from USC to Carbon Market'\n" +
+           "• 'How do I get from Apas to Ayala?'\n\n" +
+           "I'll find the best routes and give you helpful travel tips!";
   }
 
   capitalizeLocation(location) {
