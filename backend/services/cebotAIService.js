@@ -67,9 +67,11 @@ class CebotAIService {
 
     const routePatterns = [
       /(?:i am currently in|currently in)\s+([^,]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+(.+)/,
-      /(?:how (?:can|do) i get|route)\s+(?:from)?\s*([^to]+?)\s+(?:to)\s+(.+)/,
-      /(?:from)\s+([^to]+?)\s+(?:to)\s+(.+)/,
-      /^([a-zA-Z\s]+?)\s+(?:to)\s+([a-zA-Z\s]+?)$/,
+      /how\s+do\s+i\s+get\s+from\s+(.*?)\s+to\s+(.+)/,
+      /how\s+can\s+i\s+get\s+from\s+(.*?)\s+to\s+(.+)/,
+      /route\s+from\s+(.*?)\s+to\s+(.+)/,
+      /from\s+(.*?)\s+to\s+(.+)/,
+      /^([a-zA-Z\s]+?)\s+to\s+([a-zA-Z\s]+?)$/,
     ];
 
     for (const pattern of routePatterns) {
@@ -113,13 +115,21 @@ class CebotAIService {
           { origin: { $regex: routeQuery.destination, $options: 'i' }, destination: { $regex: routeQuery.origin, $options: 'i' } },
           // Route descriptions (both directions)
           { route_description: { $regex: routeQuery.origin + '.*' + routeQuery.destination, $options: 'i' } },
-          { route_description: { $regex: routeQuery.destination + '.*' + routeQuery.origin, $options: 'i' } }
+          { route_description: { $regex: routeQuery.destination + '.*' + routeQuery.origin, $options: 'i' } },
+          // Route landmarks search (bidirectional)
+          {
+            $and: [
+              { route_landmarks: { $elemMatch: { $regex: routeQuery.origin, $options: 'i' } } },
+              { route_landmarks: { $elemMatch: { $regex: routeQuery.destination, $options: 'i' } } }
+            ]
+          }
         ];
       } else if (routeQuery.destination) {
         searchQueries = [
           { destination: { $regex: routeQuery.destination, $options: 'i' } },
           { origin: { $regex: routeQuery.destination, $options: 'i' } },
-          { route_description: { $regex: routeQuery.destination, $options: 'i' } }
+          { route_description: { $regex: routeQuery.destination, $options: 'i' } },
+          { route_landmarks: { $elemMatch: { $regex: routeQuery.destination, $options: 'i' } } }
         ];
       }
 

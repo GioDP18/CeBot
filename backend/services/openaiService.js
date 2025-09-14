@@ -181,9 +181,11 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
 
     const routePatterns = [
       /(?:i am currently in|currently in)\s+(brgy\s+)?([a-zA-Z\s]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
-      /(?:how (?:can|do) i get|route)\s+(?:from)?\s*([^to]+?)\s+(?:to)\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
-      /(?:from)\s+([^to]+?)\s+(?:to)\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
-      /^([a-zA-Z\s]+?)\s+(?:to)\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
+      /how\s+do\s+i\s+get\s+from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
+      /how\s+can\s+i\s+get\s+from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
+      /route\s+from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
+      /from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
+      /^([a-zA-Z\s]+?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
     ];
 
     for (const pattern of routePatterns) {
@@ -268,21 +270,23 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
                 }
               ]
             },
-            // Routes that pass through both locations (broader search)
+            // Routes that pass through both locations (broader search including landmarks)
             {
               $and: [
                 {
                   $or: [
                     { origin: { $regex: origin, $options: 'i' } },
                     { destination: { $regex: origin, $options: 'i' } },
-                    { notes: { $regex: origin, $options: 'i' } }
+                    { notes: { $regex: origin, $options: 'i' } },
+                    { route_landmarks: { $elemMatch: { $regex: origin, $options: 'i' } } }
                   ]
                 },
                 {
                   $or: [
                     { origin: { $regex: destination, $options: 'i' } },
                     { destination: { $regex: destination, $options: 'i' } },
-                    { notes: { $regex: destination, $options: 'i' } }
+                    { notes: { $regex: destination, $options: 'i' } },
+                    { route_landmarks: { $elemMatch: { $regex: destination, $options: 'i' } } }
                   ]
                 }
               ]
@@ -290,23 +294,25 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
           ]
         }).limit(10);
 
-        // If still no direct routes, search for routes from origin
+        // If still no direct routes, search for routes from origin (including landmarks)
         if (routes.length === 0) {
           routes = await Route.find({
             $or: [
               { origin: { $regex: origin, $options: 'i' } },
               { destination: { $regex: origin, $options: 'i' } },
-              { notes: { $regex: origin, $options: 'i' } }
+              { notes: { $regex: origin, $options: 'i' } },
+              { route_landmarks: { $elemMatch: { $regex: origin, $options: 'i' } } }
             ]
           }).limit(8);
         }
       } else if (destination) {
-        // Search by destination only
+        // Search by destination only (including landmarks)
         routes = await Route.find({
           $or: [
             { origin: { $regex: destination, $options: 'i' } },
             { destination: { $regex: destination, $options: 'i' } },
-            { notes: { $regex: destination, $options: 'i' } }
+            { notes: { $regex: destination, $options: 'i' } },
+            { route_landmarks: { $elemMatch: { $regex: destination, $options: 'i' } } }
           ]
         }).limit(8);
       }
