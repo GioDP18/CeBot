@@ -1,4 +1,5 @@
 const Route = require('../models/Route');
+const routePlanningService = require('./routePlanningService');
 
 class OpenAIService {
   constructor() {
@@ -56,12 +57,29 @@ class OpenAIService {
 
       if (routeQuery) {
         try {
-          searchResults = await this.searchTraditionalRoutes(routeQuery);
-          routeContext = {
-            query: routeQuery,
-            results: searchResults,
-            foundRoutes: searchResults.length > 0
-          };
+          // Use the new route planning service for intelligent route planning
+          if (routeQuery.origin && routeQuery.destination) {
+            const routePlan = await routePlanningService.findRoutePlan(
+              routeQuery.origin, 
+              routeQuery.destination
+            );
+            
+            routeContext = {
+              query: routeQuery,
+              routePlan: routePlan,
+              foundRoutes: routePlan.routes && routePlan.routes.length > 0
+            };
+            
+            searchResults = routePlan.routes || [];
+          } else {
+            // Fallback to traditional search for single location queries
+            searchResults = await this.searchTraditionalRoutes(routeQuery);
+            routeContext = {
+              query: routeQuery,
+              results: searchResults,
+              foundRoutes: searchResults.length > 0
+            };
+          }
         } catch (error) {
           console.error('Route search error:', error);
           searchResults = [];
@@ -118,8 +136,9 @@ Key responsibilities:
 1. Help users find the best routes between locations in Metro Cebu
 2. Provide information about jeepney routes, bus routes, and other public transport
 3. Give practical advice about fares, travel times, and alternative routes
-4. Be friendly, conversational, and use some Filipino expressions naturally
-5. Always prioritize safety and convenience for travelers
+4. Plan multi-ride journeys with transfers when no direct route exists
+5. Be friendly, conversational, and use some Filipino expressions naturally
+6. Always prioritize safety and convenience for travelers
 
 IMPORTANT ROUTE LOGIC:
 - ALL ROUTE COORDINATES ARE BIDIRECTIONAL: Routes work in both directions
@@ -128,25 +147,68 @@ IMPORTANT ROUTE LOGIC:
 - Example: 17B works for both "Apas → Carbon" AND "Carbon → Apas"
 - Always mention that the route works in both directions when applicable
 
+MULTI-RIDE JOURNEY PLANNING:
+- When no direct route exists, provide clear step-by-step transfer instructions
+- Explain transfer points and which route codes to look for
+- Be encouraging about multi-ride journeys - they're normal and effective
+- Provide practical tips for transfers (look for route codes, ask locals, etc.)
+
 Guidelines:
 - Use a warm, helpful tone but don't start every message with greetings
 - Only use Filipino expressions like "Kumusta!", "Salamat", "Ingat" when naturally appropriate
 - When route information is provided, present it clearly and suggest practical tips
 - ALWAYS clarify that routes work bidirectionally when showing route codes
-- If no direct routes are found, offer alternatives or suggestions
+- For multi-ride journeys, make instructions clear and encouraging
+- If no suitable routes found, offer alternatives or suggestions
 - Keep responses concise but informative
 - Focus on practical transportation advice for Metro Cebu
 
-Remember: You're helping people navigate Metro Cebu's complex but extensive public transportation network. Be encouraging and helpful!`;
+Remember: You're helping people navigate Metro Cebu's complex but extensive public transportation network. Be encouraging and helpful, especially when transfers are needed!`;
   }
 
   createContextualPrompt(userMessage, routeContext) {
     let prompt = `User message: "${userMessage}"\n\n`;
 
-    if (routeContext && routeContext.foundRoutes) {
+    if (routeContext && routeContext.routePlan) {
+      const { routePlan } = routeContext;
+      
+      if (routePlan.type === 'direct') {
+        prompt += `Direct routes found:\n`;
+        prompt += `From: ${routeContext.query.origin}\n`;
+        prompt += `To: ${routeContext.query.destination}\n\n`;
+        
+        prompt += `Available routes (BIDIRECTIONAL - work in both directions):\n`;
+        routePlan.routes.forEach((route, index) => {
+          prompt += `${index + 1}. ${route.route_code} (${route.type}): ${route.origin} → ${route.destination}`;
+          if (route.notes) prompt += ` - ${route.notes}`;
+          prompt += `\n`;
+        });
+        
+        prompt += `\nIMPORTANT: These routes work BOTH ways! Please provide a helpful response emphasizing bidirectional nature.`;
+        
+      } else if (routePlan.type === 'multi_ride') {
+        prompt += `Multi-ride journey plan found:\n`;
+        prompt += `From: ${routeContext.query.origin}\n`;
+        prompt += `To: ${routeContext.query.destination}\n`;
+        prompt += `Transfers needed: ${routePlan.transfers}\n\n`;
+        
+        prompt += `Journey plan:\n`;
+        prompt += routePlan.instructions;
+        
+        prompt += `\n\nPlease present this multi-ride journey in a clear, encouraging way. Emphasize that while it requires transfers, it will get the user to their destination.`;
+        
+      } else if (routePlan.type === 'no_route') {
+        prompt += `No suitable route found:\n`;
+        prompt += `From: ${routeContext.query.origin}\n`;
+        prompt += `To: ${routeContext.query.destination}\n\n`;
+        prompt += `Please suggest alternative approaches like breaking the journey, using nearby landmarks, or asking for specific popular destinations.`;
+      }
+      
+    } else if (routeContext && routeContext.foundRoutes && routeContext.results) {
+      // Fallback for single location queries
       prompt += `Route search results found:\n`;
-      prompt += `From: ${routeContext.query.origin}\n`;
-      prompt += `To: ${routeContext.query.destination}\n\n`;
+      prompt += `From: ${routeContext.query.origin || 'Not specified'}\n`;
+      prompt += `To: ${routeContext.query.destination || 'Not specified'}\n\n`;
       
       prompt += `Available routes (BIDIRECTIONAL - work in both directions):\n`;
       routeContext.results.forEach((route, index) => {
@@ -155,8 +217,7 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
         prompt += `\n`;
       });
 
-      prompt += `\nIMPORTANT: These routes work BOTH ways! If showing Apas→Carbon with code 17B, the same 17B also works Carbon→Apas.`;
-      prompt += `\nPlease provide a helpful response that includes these route options and emphasize the bidirectional nature.`;
+      prompt += `\nIMPORTANT: These routes work BOTH ways! Please provide a helpful response that includes these route options and emphasize the bidirectional nature.`;
     } else if (routeContext && routeContext.query) {
       prompt += `Route search attempted but no direct routes found:\n`;
       prompt += `From: ${routeContext.query.origin || 'Not specified'}\n`;

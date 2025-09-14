@@ -1,4 +1,5 @@
 const Route = require('../models/Route');
+const routePlanningService = require('./routePlanningService');
 
 class CebotAIService {
   constructor() {
@@ -19,12 +20,29 @@ class CebotAIService {
 
       if (routeQuery) {
         try {
-          searchResults = await this.searchTraditionalRoutes(routeQuery);
-          routeContext = {
-            query: routeQuery,
-            results: searchResults,
-            foundRoutes: searchResults.length > 0
-          };
+          // Use the new route planning service for intelligent route planning
+          if (routeQuery.origin && routeQuery.destination) {
+            const routePlan = await routePlanningService.findRoutePlan(
+              routeQuery.origin, 
+              routeQuery.destination
+            );
+            
+            routeContext = {
+              query: routeQuery,
+              routePlan: routePlan,
+              foundRoutes: routePlan.routes && routePlan.routes.length > 0
+            };
+            
+            searchResults = routePlan.routes || [];
+          } else {
+            // Fallback to traditional search for single location queries
+            searchResults = await this.searchTraditionalRoutes(routeQuery);
+            routeContext = {
+              query: routeQuery,
+              results: searchResults,
+              foundRoutes: searchResults.length > 0
+            };
+          }
         } catch (error) {
           console.error('Route search error:', error);
           searchResults = [];
@@ -151,7 +169,23 @@ class CebotAIService {
     }
 
     if (routeContext) {
-      if (routeContext.foundRoutes && routeContext.results.length > 0) {
+      // Handle new route planning results
+      if (routeContext.routePlan) {
+        const { routePlan } = routeContext;
+        
+        if (routePlan.type === 'direct') {
+          return routePlan.instructions;
+        } else if (routePlan.type === 'multi_ride') {
+          return routePlan.instructions;
+        } else if (routePlan.type === 'no_route') {
+          return routePlan.instructions;
+        } else if (routePlan.type === 'error') {
+          return routePlan.instructions;
+        }
+      }
+      
+      // Fallback to traditional handling for single location queries
+      if (routeContext.foundRoutes && routeContext.results && routeContext.results.length > 0) {
         const routes = routeContext.results;
         let response = 'Perfect! I found the routes for your trip';
         
