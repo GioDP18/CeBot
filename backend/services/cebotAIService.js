@@ -84,10 +84,13 @@ class CebotAIService {
     if (!hasRouteKeywords) return null;
 
     const routePatterns = [
+      // Most specific patterns first
+      /(?:i am from|i'm from)\s+([a-zA-Z\s]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+(.+)/,
       /(?:i am currently in|currently in)\s+([^,]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+(.+)/,
       /how\s+do\s+i\s+get\s+from\s+(.*?)\s+to\s+(.+)/,
       /how\s+can\s+i\s+get\s+from\s+(.*?)\s+to\s+(.+)/,
       /route\s+from\s+(.*?)\s+to\s+(.+)/,
+      // Generic patterns last
       /from\s+(.*?)\s+to\s+(.+)/,
       /^([a-zA-Z\s]+?)\s+to\s+([a-zA-Z\s]+?)$/,
     ];

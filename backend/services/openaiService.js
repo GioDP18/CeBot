@@ -241,10 +241,13 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
     if (!hasRouteKeywords) return null;
 
     const routePatterns = [
+      // Most specific patterns first
+      /(?:i am from|i'm from)\s+(brgy\s+)?([a-zA-Z\s]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
       /(?:i am currently in|currently in)\s+(brgy\s+)?([a-zA-Z\s]+?)[\s,]+(?:how (?:can|do) i get to|how to get to)\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
       /how\s+do\s+i\s+get\s+from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
       /how\s+can\s+i\s+get\s+from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
       /route\s+from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
+      // Generic patterns last
       /from\s+(.*?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
       /^([a-zA-Z\s]+?)\s+to\s+([a-zA-Z\s]+?)(?:\s+what|\s+which|\?|$)/,
     ];
@@ -252,13 +255,23 @@ Remember: You're helping people navigate Metro Cebu's complex but extensive publ
     for (const pattern of routePatterns) {
       const match = cleanMessage.match(pattern);
       if (match && match.length >= 3) {
+        let origin, destination;
+        
+        // Handle "I am from" pattern specifically (it captures 4 groups)
+        if (pattern.source.includes('i am from|i\\\'m from') && match.length === 4) {
+          origin = this.cleanLocationName(match[2].trim()); // The location after "from"
+          destination = this.cleanLocationName(match[3].trim()); // The destination
+        }
         // For patterns with 3 groups (brgy + location + destination)
-        const origin = match.length === 4 ? 
-          this.cleanLocationName((match[2] || match[1]).trim()) : 
-          this.cleanLocationName(match[1].trim());
-        const destination = match.length === 4 ? 
-          this.cleanLocationName(match[3].trim()) : 
-          this.cleanLocationName(match[2].trim());
+        else if (match.length === 4 && pattern.source.includes('brgy')) {
+          origin = this.cleanLocationName((match[2] || match[1]).trim()); 
+          destination = this.cleanLocationName(match[3].trim());
+        }
+        // For patterns with 2 groups (origin + destination)
+        else {
+          origin = this.cleanLocationName(match[1].trim());
+          destination = this.cleanLocationName(match[2].trim());
+        }
         
         if (origin && destination && origin.length > 1 && destination.length > 1 && origin !== destination) {
           return { origin, destination };
